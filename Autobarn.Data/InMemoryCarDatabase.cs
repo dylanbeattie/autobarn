@@ -30,7 +30,7 @@ namespace Autobarn.Data {
 
 			makes.ForEach(make => make.Models.ForEach(model => model.Make = make));
 			foreach (var carModel in makes.SelectMany(m => m.Models)) {
-				carModel.Cars.ForEach(car => car.CarModel = carModel);
+			//	carModel.Cars.ForEach(car => car.CarModel = carModel);
 			}
 
 			models = makes.SelectMany(make => make.Models).ToList();

@@ -8,6 +8,6 @@
 <h2>Cars For Sale</h2>
 <ul>
     @foreach (var vehicle in Model) {
-        <li>@vehicle.CarModel (@vehicle.Year, @vehicle.Color)</li>
+        <li>(@vehicle.Year, @vehicle.Color)</li>
     }
 </ul>
