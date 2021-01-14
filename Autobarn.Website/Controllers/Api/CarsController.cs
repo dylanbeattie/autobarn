@@ -8,6 +8,36 @@ using System.Linq;
 
 namespace Autobarn.Website.Controllers.Api {
 
+	[Route("api/")]
+	[ApiController]
+	public class ApiDefaultController : ControllerBase {
+		[HttpGet]
+		public ActionResult Get() {
+			var json = new {
+				message = "Welcome to the Autobarn API",
+				_links = new {
+					cars = new {
+						name = "Get all cars",
+						href = "/api/cars"
+					},
+					car = new {
+						name = "Find a car",
+						href = "/api/cars/{registration}"
+					}
+				},
+				_actions = new {
+					add = new {
+						name = "Add a car to the Autobarn database",
+						href = "/api/cars",
+						method = "POST",
+						schema = "/schemas/newcar",
+						type = "application/json"
+					}
+				}
+			};
+			return (Ok(json));
+		}
+	}
 
 	[Route("api/[controller]")]
 	[ApiController]
@@ -44,8 +74,8 @@ namespace Autobarn.Website.Controllers.Api {
 		public ActionResult Post([FromBody] CarPostModel post) {
 			var existingCar = db.FindCar(post.Registration);
 			if (existingCar != default) return Conflict($"Sorry - the car with registration {post.Registration} is already listed!");
-			var model =  db.Models.FirstOrDefault(m  => m.Uri == post.Model);
-			if (model == default) return BadRequest("We don't recognise that car model - sorry!");			
+			var model = db.Models.FirstOrDefault(m => m.Uri == post.Model);
+			if (model == default) return BadRequest("We don't recognise that car model - sorry!");
 			var car = new Autobarn.Data.Entities.Car {
 				Registration = post.Registration,
 				Color = post.Color,
@@ -53,7 +83,7 @@ namespace Autobarn.Website.Controllers.Api {
 				CarModel = model
 			};
 			db.AddCar(car);
-			return(Created($"/api/cars/{car.Registration}", car));
+			return (Created($"/api/cars/{car.Registration}", car));
 		}
 
 		// PUT api/<CarsController>/5
@@ -68,9 +98,9 @@ namespace Autobarn.Website.Controllers.Api {
 	}
 
 	public class CarPostModel {
-		public string Registration { get;set; }
-		public string Color {get;set;}
-		public int Year { get;set; }
-		public string Model {get;set;}
+		public string Registration { get; set; }
+		public string Color { get; set; }
+		public int Year { get; set; }
+		public string Model { get; set; }
 	}
 }
