@@ -1,5 +1,6 @@
 using Autobarn.Data;
 using Autobarn.Website.GraphQL.Schemas;
+using EasyNetQ;
 using GraphiQl;
 using GraphQL.Server;
 using Microsoft.AspNetCore.Builder;
@@ -10,6 +11,9 @@ using Microsoft.Extensions.Hosting;
 
 namespace Autobarn.Website {
 	public class Startup {
+
+		const string AMQP = "amqps://uzvpuvak:2S_t9clRGI16R8Kx6MbaYdUKc0XXGq7p@rattlesnake.rmq.cloudamqp.com/uzvpuvak";
+
 		public Startup(IConfiguration configuration) {
 			Configuration = configuration;
 		}
@@ -22,6 +26,9 @@ namespace Autobarn.Website {
 			services.AddControllersWithViews();
 			var db = new InMemoryCarDatabase("JsonData");
 			services.AddSingleton<ICarDatabase>(db);
+
+			var bus = RabbitHutch.CreateBus(AMQP);
+			services.AddSingleton<IBus>(bus);
 
 			services.AddSingleton<AutobarnSchema>();
 			services

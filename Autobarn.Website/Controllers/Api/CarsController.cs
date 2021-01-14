@@ -3,50 +3,24 @@ using System.Collections.Generic;
 using Autobarn.Data;
 using Autobarn.Data.Entities;
 using System.Linq;
+using EasyNetQ;
+using Autobarn.Messages;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Autobarn.Website.Controllers.Api {
 
-	[Route("api/")]
-	[ApiController]
-	public class ApiDefaultController : ControllerBase {
-		[HttpGet]
-		public ActionResult Get() {
-			var json = new {
-				message = "Welcome to the Autobarn API",
-				_links = new {
-					cars = new {
-						name = "Get all cars",
-						href = "/api/cars"
-					},
-					car = new {
-						name = "Find a car",
-						href = "/api/cars/{registration}"
-					}
-				},
-				_actions = new {
-					add = new {
-						name = "Add a car to the Autobarn database",
-						href = "/api/cars",
-						method = "POST",
-						schema = "/schemas/newcar",
-						type = "application/json"
-					}
-				}
-			};
-			return (Ok(json));
-		}
-	}
-
 	[Route("api/[controller]")]
 	[ApiController]
 	public class CarsController : ControllerBase {
 		private readonly ICarDatabase db;
+		private readonly IBus bus;
 
-		public CarsController(ICarDatabase db) {
+		public CarsController(ICarDatabase db, IBus bus) {
 			this.db = db;
+			this.bus = bus;			
 		}
+
 		// GET: api/<CarsController>
 		[HttpGet]
 		public IEnumerable<Car> Get() {
@@ -83,6 +57,8 @@ namespace Autobarn.Website.Controllers.Api {
 				CarModel = model
 			};
 			db.AddCar(car);
+			var message = CreateMessage(car);
+			bus.PubSub.Publish(message);
 			return (Created($"/api/cars/{car.Registration}", car));
 		}
 
@@ -94,6 +70,16 @@ namespace Autobarn.Website.Controllers.Api {
 		// DELETE api/<CarsController>/5
 		[HttpDelete("{id}")]
 		public void Delete(int id) {
+		}
+
+		private NewCarMessage CreateMessage(Car car) {
+			return new NewCarMessage() {
+				Make = car.CarModel.Make.Code,
+				Model = car.CarModel.Code,
+				Color = car.Color,
+				Year = car.Year,
+				Registration = car.Registration
+			};
 		}
 	}
 

@@ -32,7 +32,8 @@ namespace Autobarn.Website.GraphQL.Queries {
 			};
 		}
 
-		private List<Car> GetAllCars(IResolveFieldContext<object> context) => db.Cars.ToList();
+		private List<Car> GetAllCars(IResolveFieldContext<object> context) => 
+			db.Cars.ToList();
 
 		private Car GetCar(IResolveFieldContext<object> context) {
 			var registration = context.Arguments["registration"].GetPropertyValue<string>();
