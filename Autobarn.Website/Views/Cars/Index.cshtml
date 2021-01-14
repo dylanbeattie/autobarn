@@ -6,8 +6,29 @@
 }
 
 <h2>Cars For Sale</h2>
-<ul>
+<ul id="car-list">
     @foreach (var vehicle in Model) {
         <li>@vehicle.CarModel (@vehicle.Year, @vehicle.Color)</li>
     }
 </ul>
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.3/signalr.min.js"></script>    
+    <script>
+var connection = new signalR.HubConnectionBuilder().withUrl("/newcarhub").build();        
+
+connection.on("DoMessage", function(user, message) {    
+    var data = JSON.parse(message);
+    let $ul = $("#car-list");
+    let $li = $(`<li>${data.make} ${data.model} (${data.year}, ${data.color}) - <em>${data.price} ${data.currency}</em></li>`);
+    $ul.prepend($li);
+    console.log(message);
+});
+
+connection.start().then(function() {
+    console.log("SignalR has started!")
+}).catch(function(error) {
+    console.log(error);
+});
+
+    </script>
+}
