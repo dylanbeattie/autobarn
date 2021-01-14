@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="EasyNetQ" Version="6.3.1" />
     <PackageReference Include="Google.Protobuf" Version="3.14.0" />
     <PackageReference Include="Grpc.Net.Client" Version="2.34.0" />
     <PackageReference Include="Grpc.Tools" Version="2.34.1">
@@ -16,5 +17,9 @@
 
   <ItemGroup>
     <Protobuf Include="Protos\price.proto" GrpcServices="Client" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Autobarn.Messages\Autobarn.Messages.csproj" />
   </ItemGroup>
 </Project>

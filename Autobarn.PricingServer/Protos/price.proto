@@ -15,7 +15,7 @@ message PriceRequest {
 	string make = 1;
 	string model = 2;
 	int32 year = 3;
-	string colour = 4;
+  string colour = 4;
 }
 
 // The response message containing the greetings.
