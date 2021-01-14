@@ -31,7 +31,7 @@ namespace Autobarn.PricingServer
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGrpcService<GreeterService>();
+                endpoints.MapGrpcService<PricerService>();
 
                 endpoints.MapGet("/", async context =>
                 {

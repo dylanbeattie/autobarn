@@ -5,17 +5,21 @@ option csharp_namespace = "Autobarn.PricingServer";
 package greet;
 
 // The greeting service definition.
-service Greeter {
+service Pricer {
   // Sends a greeting
-  rpc SayHello (HelloRequest) returns (HelloReply);
+  rpc GetPrice (PriceRequest) returns (PriceReply);
 }
 
 // The request message containing the user's name.
-message HelloRequest {
-  string name = 1;
+message PriceRequest {
+	string make = 1;
+	string model = 2;
+	int32 year = 3;
+	string colour = 4;
 }
 
 // The response message containing the greetings.
-message HelloReply {
-  string message = 1;
+message PriceReply {
+	int32 price = 1;
+  string currency = 2;
 }
