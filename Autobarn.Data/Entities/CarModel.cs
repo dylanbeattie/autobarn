@@ -10,6 +10,10 @@ namespace Autobarn.Data.Entities {
 		
 		[JsonIgnore]
 		public List<Car> Cars { get; set; } = new List<Car>();
+
+		[JsonIgnore]
+		public string Uri { get { return $"/api/carmodels/{this.Code}"; } }
+
 		public override string ToString() => $"{Make.Name} {Name}";
 	}
 }

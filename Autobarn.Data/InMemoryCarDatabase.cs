@@ -16,6 +16,11 @@ namespace Autobarn.Data {
 			Cars.SingleOrDefault(c =>
 				String.Equals(c.Registration, registration, StringComparison.InvariantCultureIgnoreCase));
 
+		public void AddCar(Car car) {
+			cars.Add(car);
+			car.CarModel.Cars.Add(car);
+		}
+	
 		private readonly List<Make> makes;
 		private readonly List<CarModel> models;
 		private readonly List<Car> cars;

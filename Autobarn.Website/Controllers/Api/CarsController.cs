@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Autobarn.Data;
 using Autobarn.Data.Entities;
+using System.Linq;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -31,7 +31,7 @@ namespace Autobarn.Website.Controllers.Api {
 			var json = new {
 				links = new {
 					carModel = new {
-						href = $"/api/carmodels/{car.CarModel.Code}"
+						href = car.CarModel.Uri
 					}
 				},
 				item = car
@@ -41,7 +41,19 @@ namespace Autobarn.Website.Controllers.Api {
 
 		// POST api/<CarsController>
 		[HttpPost]
-		public void Post([FromBody] string value) {
+		public ActionResult Post([FromBody] CarPostModel post) {
+			var existingCar = db.FindCar(post.Registration);
+			if (existingCar != default) return Conflict($"Sorry - the car with registration {post.Registration} is already listed!");
+			var model =  db.Models.FirstOrDefault(m  => m.Uri == post.Model);
+			if (model == default) return BadRequest("We don't recognise that car model - sorry!");			
+			var car = new Autobarn.Data.Entities.Car {
+				Registration = post.Registration,
+				Color = post.Color,
+				Year = post.Year,
+				CarModel = model
+			};
+			db.AddCar(car);
+			return(Created($"/api/cars/{car.Registration}", car));
 		}
 
 		// PUT api/<CarsController>/5
@@ -53,5 +65,12 @@ namespace Autobarn.Website.Controllers.Api {
 		[HttpDelete("{id}")]
 		public void Delete(int id) {
 		}
+	}
+
+	public class CarPostModel {
+		public string Registration { get;set; }
+		public string Color {get;set;}
+		public int Year { get;set; }
+		public string Model {get;set;}
 	}
 }
