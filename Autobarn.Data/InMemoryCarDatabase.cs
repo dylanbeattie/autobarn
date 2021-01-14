@@ -11,8 +11,9 @@ namespace Autobarn.Data {
 		public IList<Car> Cars => cars;
 		public IList<Make> Makes => makes;
 		public IList<CarModel> Models => models;
+		/// Return the car matching the specified registration. If no matching car, return null.
 		public Car FindCar(string registration) =>
-			Cars.Single(c =>
+			Cars.SingleOrDefault(c =>
 				String.Equals(c.Registration, registration, StringComparison.InvariantCultureIgnoreCase));
 
 		private readonly List<Make> makes;
@@ -30,7 +31,7 @@ namespace Autobarn.Data {
 
 			makes.ForEach(make => make.Models.ForEach(model => model.Make = make));
 			foreach (var carModel in makes.SelectMany(m => m.Models)) {
-			//	carModel.Cars.ForEach(car => car.CarModel = carModel);
+				carModel.Cars.ForEach(car => car.CarModel = carModel);
 			}
 
 			models = makes.SelectMany(make => make.Models).ToList();
