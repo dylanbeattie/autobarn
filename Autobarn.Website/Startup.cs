@@ -1,4 +1,7 @@
 using Autobarn.Data;
+using Autobarn.Website.GraphQL.Schemas;
+using GraphiQl;
+using GraphQL.Server;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -19,6 +22,11 @@ namespace Autobarn.Website {
 			services.AddControllersWithViews();
 			var db = new InMemoryCarDatabase("JsonData");
 			services.AddSingleton<ICarDatabase>(db);
+
+			services.AddSingleton<AutobarnSchema>();
+			services
+				.AddGraphQL(options => options.EnableMetrics = false)
+				.AddSystemTextJson();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -37,11 +45,15 @@ namespace Autobarn.Website {
 
 			app.UseAuthorization();
 
+			app.UseGraphQL<AutobarnSchema>();	
+			app.UseGraphiQl("/graphiql");
+
 			app.UseEndpoints(endpoints => {
 				endpoints.MapControllerRoute(
 					name: "default",
 					pattern: "{controller=Home}/{action=Index}/{id?}");
 			});
+
 		}
 	}
 }
